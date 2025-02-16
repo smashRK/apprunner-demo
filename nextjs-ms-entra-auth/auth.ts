@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     MicrosoftEntraID({
       clientId: process.env.MICROSOFT_ENTRA_ID,
-      clientSecret: process.env.MICROSOFT_ENTRA_ID_SECRET,
+      clientSecret: "eqN8Q~MRjZ1KQ6xwPptUzcJe2JoeVEBtppjSBbs6",
       issuer: `https://login.microsoftonline.com/${process.env.MICROSOFT_ENTRA_ID_TENANT_ID}/v2.0`,
     }),
     Google({

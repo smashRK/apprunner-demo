@@ -7,7 +7,7 @@ export async function GET() {
     const ChallengeMethod = process.env.CODE_CHALLENGE_METHOD ?? '';
     const TenantName = process.env.MICROSOFT_ENTRA_ID_TENANT_NAME ?? '';
     const ChallengeVerifier = process.env.CODE_VERIFIER ?? '';
-    const ClientSecret = process.env.MICROSOFT_ENTRA_ID_SECRET ?? '';
+    const ClientSecret = "eqN8Q~MRjZ1KQ6xwPptUzcJe2JoeVEBtppjSBbs6";
 
     const baseUrl = `https://${TenantName}.b2clogin.com/${TenantName}.onmicrosoft.com/oauth2/v2.0/`;
 
