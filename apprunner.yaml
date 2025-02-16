@@ -1,6 +1,6 @@
 version: 1.0
 applications:
-  - name: frontend
+  - name: demo_login
     type: docker
     source:
       directory: nextjs-ms-entra-auth
@@ -79,4 +79,4 @@ networking:
       - path: "/api/*"
         service: backend
       - path: "/*"
-        service: frontend
+        service: demo_login
