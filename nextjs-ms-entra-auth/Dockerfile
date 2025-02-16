@@ -2,12 +2,15 @@ FROM node:18-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Add logging for dependency installation
+RUN echo "Installing dependencies..." && \
+    apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies with verbose logging
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN echo "Running npm ci..." && \
+    npm ci --verbose
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -18,7 +21,11 @@ COPY . .
 # Disable telemetry during the build
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
+# Add build logging
+RUN echo "Starting build process..." && \
+    echo "Node version: $(node -v)" && \
+    echo "NPM version: $(npm -v)" && \
+    npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -40,6 +47,10 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Copy startup script and set permissions
+COPY start.sh ./
+RUN chmod +x start.sh
+
 USER nextjs
 
 EXPOSE 3000
@@ -47,4 +58,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"]
+# Use startup script instead of direct node command
+CMD ["./start.sh"]

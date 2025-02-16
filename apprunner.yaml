@@ -9,6 +9,8 @@ applications:
     env:
       - name: NODE_ENV
         value: "production"
+      - name: DEBUG
+        value: "*"  # Enable verbose debugging
       - name: NEXTAUTH_URL
         value: ${NEXTAUTH_URL}
       - name: NEXTAUTH_SECRET
@@ -37,12 +39,15 @@ applications:
         value: ${CODE_VERIFIER}
       - name: CODE_CHALLENGE_METHOD
         value: ${CODE_CHALLENGE_METHOD}
+      - name: NEXT_DEBUG_MODE
+        value: "true"
     healthCheck:
       path: "/"
       healthyThreshold: 2
-      unhealthyThreshold: 5
-      interval: 30
-      timeout: 5
+      unhealthyThreshold: 10  # Increased to allow more time for startup
+      interval: 45  # Increased interval
+      timeout: 10  # Increased timeout
+      startupTime: 120  # Added startup grace period
 
   - name: backend
     type: docker
