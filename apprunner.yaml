@@ -1,0 +1,77 @@
+version: 1.0
+applications:
+  - name: frontend
+    type: docker
+    source:
+      directory: nextjs-ms-entra-auth
+      dockerfile: Dockerfile
+    port: 3000
+    env:
+      - name: NODE_ENV
+        value: "production"
+      - name: NEXTAUTH_URL
+        value: ${NEXTAUTH_URL}
+      - name: NEXTAUTH_SECRET
+        value: ${NEXTAUTH_SECRET}
+      - name: MICROSOFT_ENTRA_ID
+        value: ${MICROSOFT_ENTRA_ID}
+      - name: MICROSOFT_ENTRA_ID_SECRET
+        value: ${MICROSOFT_ENTRA_ID_SECRET}
+      - name: MICROSOFT_ENTRA_ID_TENANT_ID
+        value: ${MICROSOFT_ENTRA_ID_TENANT_ID}
+      - name: MICROSOFT_ENTRA_ID_TENANT_NAME
+        value: ${MICROSOFT_ENTRA_ID_TENANT_NAME}
+      - name: GOOGLE_CLIENT_ID
+        value: ${GOOGLE_CLIENT_ID}
+      - name: GOOGLE_CLIENT_SECRET
+        value: ${GOOGLE_CLIENT_SECRET}
+      - name: LINKEDIN_CLIENT_ID
+        value: ${LINKEDIN_CLIENT_ID}
+      - name: LINKEDIN_CLIENT_SECRET
+        value: ${LINKEDIN_CLIENT_SECRET}
+      - name: SIGNIN_POLICY
+        value: "B2C_1_signUp_signIn"
+      - name: CODE_CHALLENGE
+        value: ${CODE_CHALLENGE}
+      - name: CODE_VERIFIER
+        value: ${CODE_VERIFIER}
+      - name: CODE_CHALLENGE_METHOD
+        value: ${CODE_CHALLENGE_METHOD}
+    healthCheck:
+      path: "/"
+      healthyThreshold: 2
+      unhealthyThreshold: 5
+      interval: 30
+      timeout: 5
+
+  - name: backend
+    type: docker
+    source:
+      directory: poccurd
+      dockerfile: Dockerfile
+    port: 8080
+    env:
+      - name: SPRING_PROFILES_ACTIVE
+        value: "prod"
+      - name: SERVER_PORT
+        value: "8080"
+      - name: DATABASE_URL
+        value: "jdbc:postgresql://pg-aws.cl84q2gowr55.ap-south-1.rds.amazonaws.com/postgres"
+      - name: DATABASE_USERNAME
+        value: "postgres"
+      - name: DATABASE_PASSWORD
+        value: "v6tr61za2nHi"
+    healthCheck:
+      path: "/actuator/health"
+      healthyThreshold: 2
+      unhealthyThreshold: 5
+      interval: 30
+      timeout: 5
+
+networking:
+  - type: application-load-balancer
+    rules:
+      - path: "/api/*"
+        service: backend
+      - path: "/*"
+        service: frontend
