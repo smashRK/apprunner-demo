@@ -9,12 +9,14 @@ applications:
           - java -version
           - mvn -version
         build:
-          - echo "Running Maven build with debug..."
-          - mvn clean install -X -e
+          - echo "Running Maven build..."
+          - mvn clean package -DskipTests
+          - echo "Renaming JAR for consistency..."
+          - cp target/*.jar target/app.jar
           - echo "Build completed, checking target directory..."
           - ls -la target/
       output:
-        - target/*.jar
+        - target/app.jar
     source:
       directory: poccurd
     start:
@@ -22,9 +24,9 @@ applications:
         echo "Changing to application directory..." &&
         cd /var/task/poccurd &&
         echo "Current directory: $(pwd)" &&
-        echo "Starting Spring Boot application with debug logging..." &&
-        JAVA_OPTS="-Xdebug -Dlogging.level.root=DEBUG -Dlogging.level.org.springframework=DEBUG -Dlogging.level.com.example=TRACE" &&
-        mvn spring-boot:run -X -Dspring-boot.run.jvmArguments="$JAVA_OPTS"
+        chmod +x target/app.jar &&
+        echo "Starting Spring Boot application..." &&
+        java -jar target/app.jar
     port: 8080
     instanceConfiguration:
       cpu: 1
@@ -32,12 +34,6 @@ applications:
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: "prod"
-      - name: DATABASE_URL
-        value: "jdbc:postgresql://pg-aws.cl84q2gowr55.ap-south-1.rds.amazonaws.com/postgres"
-      - name: DATABASE_USERNAME
-        value: "postgres"
-      - name: DATABASE_PASSWORD
-        value: "v6tr61za2nHi"
       - name: LOGGING_LEVEL_ROOT
         value: "DEBUG"
       - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK
