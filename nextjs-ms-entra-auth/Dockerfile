@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:18.17-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -9,8 +9,8 @@ WORKDIR /app
 
 # Install dependencies with verbose logging
 COPY package.json package-lock.json* ./
-RUN echo "Running npm ci..." && \
-    npm ci --verbose
+RUN echo "Running npm install..." && \
+    npm install --production --frozen-lockfile --verbose
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -20,12 +20,13 @@ COPY . .
 
 # Disable telemetry during the build
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 
 # Add build logging
 RUN echo "Starting build process..." && \
     echo "Node version: $(node -v)" && \
     echo "NPM version: $(npm -v)" && \
-    npm run build
+    npm run build || (echo "Build failed with error $?" && exit 1)
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -37,7 +38,9 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy necessary files
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
 # Set the correct permission for prerender cache
 RUN mkdir .next

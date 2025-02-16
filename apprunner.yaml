@@ -6,11 +6,16 @@ applications:
       directory: nextjs-ms-entra-auth
       dockerfile: Dockerfile
     port: 3000
+    instanceConfiguration:
+      cpu: 1
+      memory: 2048
     env:
       - name: NODE_ENV
         value: "production"
       - name: DEBUG
-        value: "*"  # Enable verbose debugging
+        value: "*"
+      - name: NEXT_DEBUG_MODE
+        value: "true"
       - name: NEXTAUTH_URL
         value: ${NEXTAUTH_URL}
       - name: NEXTAUTH_SECRET
@@ -39,15 +44,13 @@ applications:
         value: ${CODE_VERIFIER}
       - name: CODE_CHALLENGE_METHOD
         value: ${CODE_CHALLENGE_METHOD}
-      - name: NEXT_DEBUG_MODE
-        value: "true"
     healthCheck:
-      path: "/"
-      healthyThreshold: 2
-      unhealthyThreshold: 10  # Increased to allow more time for startup
-      interval: 45  # Increased interval
-      timeout: 10  # Increased timeout
-      startupTime: 120  # Added startup grace period
+      path: "/api/health"
+      healthyThreshold: 1
+      unhealthyThreshold: 5
+      interval: 30
+      timeout: 10
+      startupTime: 180
 
   - name: backend
     type: docker
