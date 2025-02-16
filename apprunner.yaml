@@ -1,10 +1,22 @@
 version: 1.0
 applications:
   - name: demo_login
-    type: docker
+    runtime: nodejs18
+    build:
+      commands:
+        build:
+          - npm install --legacy-peer-deps
+          - npm run build
+      output:
+        - .next
+        - node_modules
+        - public
+        - package.json
+        - next.config.js
     source:
       directory: nextjs-ms-entra-auth
-      dockerfile: Dockerfile
+    start:
+      command: node server.js
     port: 3000
     instanceConfiguration:
       cpu: 1
@@ -53,33 +65,41 @@ applications:
       startupTime: 180
 
   - name: backend
-    type: docker
+    runtime: corretto17
+    build:
+      commands:
+        build:
+          - mvn clean install
+      output:
+        - target/*.jar
     source:
       directory: poccurd
-      dockerfile: Dockerfile
+    start:
+      command: mvn spring-boot:run -X
     port: 8080
+    instanceConfiguration:
+      cpu: 1
+      memory: 2048
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: "prod"
-      - name: SERVER_PORT
-        value: "8080"
       - name: DATABASE_URL
         value: "jdbc:postgresql://pg-aws.cl84q2gowr55.ap-south-1.rds.amazonaws.com/postgres"
       - name: DATABASE_USERNAME
         value: "postgres"
       - name: DATABASE_PASSWORD
         value: "v6tr61za2nHi"
+      - name: NODE_ENV
+        value: "production"
     healthCheck:
       path: "/actuator/health"
-      healthyThreshold: 2
+      healthyThreshold: 1
       unhealthyThreshold: 5
       interval: 30
-      timeout: 5
+      timeout: 10
 
-networking:
-  - type: application-load-balancer
-    rules:
-      - path: "/api/*"
-        service: backend
-      - path: "/*"
-        service: demo_login
+routes:
+  - path: "/api/*"
+    service: backend
+  - path: "/*"
+    service: demo_login
