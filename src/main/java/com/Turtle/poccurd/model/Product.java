@@ -1,7 +1,9 @@
 package com.Turtle.poccurd.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "product_details")
 public class Product {
@@ -18,15 +20,13 @@ public class Product {
     @Column(nullable = false)
     private Integer quantity;
 
-
     public Product() {
     }
 
-
-    public Product(String productName, String email, Integer password) {
+    public Product(String productName, String description, Integer quantity) {
         this.productName = productName;
-        this.description = email;
-        this.quantity = password;
+        this.description = description;
+        this.quantity = quantity;
     }
 
     public Long getId() {
@@ -62,4 +62,3 @@ public class Product {
         this.quantity = quantity;
     }
 }
-
