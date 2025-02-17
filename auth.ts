@@ -61,6 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
   },
+  skipCSRFCheck: true,
   callbacks: {
     async jwt({ token, account, profile, user }) {
       if (account) {
