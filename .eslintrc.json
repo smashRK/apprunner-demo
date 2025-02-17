@@ -1,0 +1,17 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    // Disable some common strict rules
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "react/no-unescaped-entities": "off",
+    "react/display-name": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@next/next/no-img-element": "off"
+    // Add more rules here as needed
+  },
+  "ignorePatterns": ["*.config.js", "*.config.ts"]
+}
