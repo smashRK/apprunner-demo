@@ -1,32 +1,10 @@
 version: 1.0
 applications:
   - name: backend
-    runtime: corretto17
-    build:
-      commands:
-        preBuild:
-          - echo "Starting build process..."
-          - java -version
-          - mvn -version
-        build:
-          - echo "Running Maven build..."
-          - mvn clean package -DskipTests
-          - echo "Renaming JAR for consistency..."
-          - cp target/*.jar target/app.jar
-          - echo "Build completed, checking target directory..."
-          - ls -la target/
-      output:
-        - target/app.jar
+    type: docker
     source:
       directory: poccurd
-    start:
-      command: |
-        echo "Changing to application directory..." &&
-        cd /var/task/poccurd &&
-        echo "Current directory: $(pwd)" &&
-        chmod +x target/app.jar &&
-        echo "Starting Spring Boot application..." &&
-        java -jar target/app.jar
+      dockerfile: Dockerfile
     port: 8080
     instanceConfiguration:
       cpu: 1
@@ -34,6 +12,12 @@ applications:
     env:
       - name: SPRING_PROFILES_ACTIVE
         value: "prod"
+      - name: DATABASE_URL
+        value: "jdbc:postgresql://pg-aws.cl84q2gowr55.ap-south-1.rds.amazonaws.com/postgres"
+      - name: DATABASE_USERNAME
+        value: "postgres"
+      - name: DATABASE_PASSWORD
+        value: "v6tr61za2nHi"
       - name: LOGGING_LEVEL_ROOT
         value: "DEBUG"
       - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK
@@ -44,8 +28,12 @@ applications:
         value: "true"
       - name: SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL
         value: "true"
+      - name: JAVA_OPTS
+        value: "-Xms512m -Xmx1024m"
+      - name: LOGGING_FILE_PATH
+        value: "/app/logs/spring-boot-app.log"
     healthCheck:
-      path: "/actuator/health"
+      path: "/api/users"
       healthyThreshold: 1
       unhealthyThreshold: 5
       interval: 30
