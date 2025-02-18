@@ -22,7 +22,7 @@ const CurdContainer = () => {
       setLoading(true);
       setError(null);
       console.log("Fetching products...");
-      const response = await fetch(`https://rdpkzx6p27.ap-south-1.awsapprunner.com/api/users`);
+      const response = await fetch(`https://uwrhn4ge5f.ap-south-1.awsapprunner.com/api/users`);
       console.log("Response status:", response.status);
       
       if (!response.ok) {
@@ -58,7 +58,7 @@ const CurdContainer = () => {
       if (editIndex !== null) {
         console.log("Updating product with ID:", products[editIndex].id);
         response = await fetch(
-          `https://rdpkzx6p27.ap-south-1.awsapprunner.com/api/users/${products[editIndex].id}`,
+          `https://uwrhn4ge5f.ap-south-1.awsapprunner.com/api/users/${products[editIndex].id}`,
           {
             method: "PUT",
             headers: {
@@ -69,7 +69,7 @@ const CurdContainer = () => {
         );
       } else {
         console.log("Creating new product");
-        response = await fetch(`https://rdpkzx6p27.ap-south-1.awsapprunner.com/api/users`, {
+        response = await fetch(`https://uwrhn4ge5f.ap-south-1.awsapprunner.com/api/users`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -117,7 +117,7 @@ const CurdContainer = () => {
   const handleDelete = async (id: number) => {
     try {
       setError(null);
-      const response = await fetch(`https://rdpkzx6p27.ap-south-1.awsapprunner.com/api/users/${id}`, {
+      const response = await fetch(`https://uwrhn4ge5f.ap-south-1.awsapprunner.com/api/users/${id}`, {
         method: "DELETE",
       });
 
