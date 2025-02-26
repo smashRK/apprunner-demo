@@ -12,7 +12,7 @@ export default function ApiTest() {
       setStatus('Testing API connection...');
       setError(null);
       
-      const response = await fetch('https://dedxqh5abd.ap-south-1.awsapprunner.com/api/users');
+      const response = await fetch('https://prh9xztqmh.ap-south-1.awsapprunner.com/api/users');
       const data = await response.json();
       
       setStatus('Connected successfully!');
