@@ -5,10 +5,14 @@ import com.Turtle.poccurd.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,10 +23,16 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public List<Product> getAllUsers() {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> getAllUsers() {
         logger.info("GET request received at /api/users");
-        return productService.getAllUsers();
+        List<Product> products = productService.getAllUsers();
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", products);
+        response.put("message", "Products retrieved successfully");
+        
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
