@@ -8,8 +8,6 @@ run:
   command: java -jar target/UserManagement-0.0.1-SNAPSHOT.jar
   network:
     port: 8080
-    healthCheck:
-      path: /actuator/health
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
