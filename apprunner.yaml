@@ -1,44 +1,25 @@
 version: 1.0
-applications:
-  - name: backend
-    type: docker
-    source:
-      directory: poccurd
-      dockerfile: Dockerfile
+runtime: corretto17
+build:
+  commands:
+    build:
+      - mvn clean package -DskipTests
+run:
+  command: java -jar target/UserManagement-0.0.1-SNAPSHOT.jar
+  network:
     port: 8080
-    instanceConfiguration:
-      cpu: 1
-      memory: 2048
-    env:
-      - name: SPRING_PROFILES_ACTIVE
-        value: "prod"
-      - name: DATABASE_URL
-        value: "jdbc:postgresql://pg-aws.cl84q2gowr55.ap-south-1.rds.amazonaws.com/postgres"
-      - name: DATABASE_USERNAME
-        value: "postgres"
-      - name: DATABASE_PASSWORD
-        value: "v6tr61za2nHi"
-      - name: LOGGING_LEVEL_ROOT
-        value: "DEBUG"
-      - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK
-        value: "DEBUG"
-      - name: LOGGING_LEVEL_COM_EXAMPLE
-        value: "TRACE"
-      - name: SPRING_JPA_SHOW_SQL
-        value: "true"
-      - name: SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL
-        value: "true"
-      - name: JAVA_OPTS
-        value: "-Xms512m -Xmx1024m"
-      - name: LOGGING_FILE_PATH
-        value: "/app/logs/spring-boot-app.log"
     healthCheck:
-      path: "/api/users"
-      healthyThreshold: 1
-      unhealthyThreshold: 5
-      interval: 30
-      timeout: 10
-
-routes:
-  - path: "/api/*"
-    service: backend
+      path: /actuator/health
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: prod
+    - name: SERVER_PORT
+      value: "8080"
+instance:
+  instanceRole: apprunner-service-role
+  cpu: 1
+  memory: 2048
+  autoscaling:
+    minSize: 1
+    maxSize: 2
+    maxConcurrency: 100
